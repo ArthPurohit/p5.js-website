@@ -5,7 +5,6 @@ define([
   'use strict'; //
 
   var Router = Backbone.Router.extend({
-
     routes: {
       '': 'list',
       'p5': 'list',
@@ -25,11 +24,11 @@ define([
     init: function(callback) {
       var self = this;
       require(['pageView'], function(pageView) {
-
         // If already initialized, move away from here!
         if (self._initialized) {
-          if (callback)
+          if (callback) {
             callback();
+          }
           return;
         }
 
@@ -44,10 +43,11 @@ define([
 
         // If a callback is set (a route has already been called), run it
         // otherwise, show the default list
-        if (callback)
+        if (callback) {
           callback();
-        else
+        } else {
           self.list();
+        }
       });
     },
     /**
@@ -62,10 +62,9 @@ define([
      * @param {string} searchItem The class item name: can be a method, property or event name.
      */
     get: function(searchClass, searchItem) {
-
       // if looking for a library page, redirect
       if (searchClass === 'p5.sound' && !searchItem) {
-        window.location.hash = '/libraries/'+searchClass;
+        window.location.hash = '/libraries/' + searchClass;
         return;
       }
 
@@ -94,12 +93,12 @@ define([
      */
     getItem: function(searchClass, searchItem) {
       var classes = App.classes,
-              items = App.allItems,
-              classesCount = classes.length,
-              itemsCount = items.length,
-              className = searchClass ? searchClass.toLowerCase() : undefined,
-              itemName = searchItem ? searchItem : undefined,
-              found;
+        items = App.allItems,
+        classesCount = classes.length,
+        itemsCount = items.length,
+        className = searchClass ? searchClass.toLowerCase() : undefined,
+        itemName = searchItem ? searchItem : undefined,
+        found;
 
       // Only search for a class, if itemName is undefined
       if (className && !itemName) {
@@ -124,10 +123,12 @@ define([
         }
 
         // If no match was found, fallback to search case insensitively
-        if(!found){
+        if (!found) {
           for (var i = 0; i < itemsCount; i++) {
-            if(items[i].class.toLowerCase() === className &&
-              items[i].name.toLowerCase() === itemName.toLowerCase()){
+            if (
+              items[i].class.toLowerCase() === className &&
+              items[i].name.toLowerCase() === itemName.toLowerCase()
+            ) {
               found = items[i];
               break;
             }
@@ -142,7 +143,6 @@ define([
      * @param {string} collection The name of the collection to list.
      */
     list: function(collection) {
-
       collection = 'allItems';
 
       // Make sure collection is valid
@@ -183,28 +183,26 @@ define([
      * @param {Object} item A class, method, property or event object.
      * @returns {String} The hash string, including the '#'.
      */
-     getHash: function(item) {
+    getHash: function(item) {
+      if (!item.hash) {
+        // FIX TO INVISIBLE OBJECTS: DH (see also listView.js)
 
-       if (!item.hash) {
-
-         // FIX TO INVISIBLE OBJECTS: DH (see also listView.js)
-
-         if (item.class) {
-           var clsFunc = '#/' + item.class + '.' + item.name;
-           var idx = clsFunc.lastIndexOf('.');
-           item.hash = clsFunc.substring(0,idx) + '/' + clsFunc.substring(idx+1);
-         } else {
+        if (item.class) {
+          var clsFunc = '#/' + item.class + '.' + item.name;
+          var idx = clsFunc.lastIndexOf('.');
+          item.hash =
+            clsFunc.substring(0, idx) + '/' + clsFunc.substring(idx + 1);
+        } else {
           item.hash = '#/' + item.name;
-         }
-       }
+        }
+      }
 
-       return item.hash;
+      return item.hash;
     }
   });
 
-  
   function styleCodeLinks() {
-    var links = document.getElementsByTagName("a");
+    var links = document.getElementsByTagName('a');
     for (var iLink = 0; iLink < links.length; iLink++) {
       var link = links[iLink];
       if (link.hash.startsWith('#/p5')) {
@@ -213,7 +211,6 @@ define([
     }
   }
 
-
   // Get the router
   App.router = new Router();
 
@@ -221,5 +218,4 @@ define([
   Backbone.history.start();
 
   return App.router;
-
 });

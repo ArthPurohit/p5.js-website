@@ -6,7 +6,6 @@ define([
   // Tools
   'typeahead'
 ], function(App, searchTpl, suggestionTpl) {
-
   var searchView = Backbone.View.extend({
     el: '#search',
     /**
@@ -17,8 +16,8 @@ define([
       var className = 'form-control input-lg';
       var placeholder = 'Search reference';
       this.searchHtml = tpl({
-        'placeholder': placeholder,
-        'className': className
+        placeholder: placeholder,
+        className: className
       });
       this.items = App.classes.concat(App.allItems);
 
@@ -45,13 +44,13 @@ define([
     typeaheadRender: function($input) {
       var self = this;
       $input.typeahead(null, {
-        'displayKey': 'name',
-        'minLength': 2,
+        displayKey: 'name',
+        minLength: 2,
         //'highlight': true,
-        'source': self.substringMatcher(this.items),
-        'templates': {
-          'empty': '<p class="empty-message">Unable to find any item that match the current query</p>',
-          'suggestion': _.template(suggestionTpl)
+        source: self.substringMatcher(this.items),
+        templates: {
+          empty: '<p class="empty-message">Unable to find any item that match the current query</p>',
+          suggestion: _.template(suggestionTpl)
         }
       });
     },
@@ -65,9 +64,12 @@ define([
         select(selectedItem);
       });
       $input.on('keydown', function(e) {
-        if (e.which === 13) { // enter
+        if (e.which === 13) {
+          // enter
           var txt = $input.val();
-          var f = _.find(self.items, function(it) { return it.name == txt; });
+          var f = _.find(self.items, function(it) {
+            return it.name === txt;
+          });
           if (f) {
             select(f);
           }
@@ -77,8 +79,10 @@ define([
       });
 
       function select(selectedItem) {
-        var hash = App.router.getHash(selectedItem);//
-        App.router.navigate(hash, {'trigger': true});
+        var hash = App.router.getHash(selectedItem);
+        App.router.navigate(hash, {
+          trigger: true
+        });
         $('#item').focus();
       }
     },
@@ -89,24 +93,26 @@ define([
      */
     substringMatcher: function(array) {
       return function findMatches(query, callback) {
-        var matches = [], substrRegex, arrayLength = array.length;
+        var matches = [],
+          substrRegex,
+          arrayLength = array.length;
 
         // regex used to determine if a string contains the substring `query`
         substrRegex = new RegExp(query, 'i');
 
         // iterate through the pool of strings and for any string that
         // contains the substring `query`, add it to the `matches` array
-        for (var i=0; i < arrayLength; i++) {
+        for (var i = 0; i < arrayLength; i++) {
           var item = array[i];
           if (substrRegex.test(item.name)) {
             // typeahead expects suggestions to be a js object
             matches.push({
-              'itemtype': item.itemtype,
-              'name': item.name,
-              'className': item.class,
-              'is_constructor': !!item.is_constructor,
-              'final': item.final,
-              'idx': i
+              itemtype: item.itemtype,
+              name: item.name,
+              className: item.class,
+              is_constructor: !!item.is_constructor,
+              final: item.final,
+              idx: i
             });
           }
         }
@@ -114,9 +120,7 @@ define([
         callback(matches);
       };
     }
-
   });
 
   return searchView;
-
 });

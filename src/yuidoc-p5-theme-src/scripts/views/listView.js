@@ -2,7 +2,7 @@ define([
   'App',
   // Templates
   'text!tpl/list.html'
-], function (App, listTpl) {
+], function(App, listTpl) {
   var striptags = function(html) {
     var div = document.createElement('div');
     div.innerHTML = html;
@@ -15,7 +15,7 @@ define([
     /**
      * Init.
      */
-    init: function () {
+    init: function() {
       this.listTpl = _.template(listTpl);
 
       return this;
@@ -23,17 +23,16 @@ define([
     /**
      * Render the list.
      */
-    render: function (items, listCollection) {
+    render: function(items, listCollection) {
       if (items && listCollection) {
         var self = this;
 
         // Render items and group them by module
         // module === group
         this.groups = {};
-        _.each(items, function (item, i) {
-
-          if (!item.private && item.file.indexOf('addons') === -1) { //addons don't get displayed on main page
-
+        _.each(items, function(item, i) {
+          if (!item.private && item.file.indexOf('addons') === -1) {
+            //addons don't get displayed on main page
             var group = item.module || '_';
             var subgroup = item.submodule || '_';
             if (group === subgroup) {
@@ -61,39 +60,39 @@ define([
             }
 
             // hide the un-interesting constants
-            if (group === 'Constants' && !item.example)
+            if (group === 'Constants' && !item.example) {
               return;
+            }
 
             if (item.class === 'p5') {
-
               self.groups[group].subgroups[subgroup].items.push(item);
-
             } else {
-
-              var found = _.find(self.groups[group].subgroups[subgroup].items,
-                function(i){ return i.name == item.class; });
+              var found = _.find(
+                self.groups[group].subgroups[subgroup].items,
+                function(i) {
+                  return i.name === item.class;
+                }
+              );
 
               if (!found) {
-
                 // FIX TO INVISIBLE OBJECTS: DH (see also router.js)
                 var ind = hash.lastIndexOf('/');
-                hash = item.hash.substring(0, ind).replace('p5/','p5.');
+                hash = item.hash.substring(0, ind).replace('p5/', 'p5.');
                 self.groups[group].subgroups[subgroup].items.push({
                   name: item.class,
                   hash: hash
                 });
               }
-
             }
           }
         });
 
         // Put the <li> items html into the list <ul>
         var listHtml = self.listTpl({
-          'striptags': striptags,
-          'title': self.capitalizeFirst(listCollection),
-          'groups': self.groups,
-          'listCollection': listCollection
+          striptags: striptags,
+          title: self.capitalizeFirst(listCollection),
+          groups: self.groups,
+          listCollection: listCollection
         });
 
         // Render the view
@@ -110,7 +109,7 @@ define([
      * @param {array} items Array of item objects.
      * @returns {object} This view.
      */
-    show: function (listGroup) {
+    show: function(listGroup) {
       if (App[listGroup]) {
         this.render(App[listGroup], listGroup);
       }
@@ -125,14 +124,10 @@ define([
      * @param {string} str
      * @returns {string} Returns the string.
      */
-    capitalizeFirst: function (str) {
+    capitalizeFirst: function(str) {
       return str.substr(0, 1).toUpperCase() + str.substr(1);
     }
-
-
-
   });
 
   return listView;
-
 });

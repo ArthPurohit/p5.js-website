@@ -1,8 +1,4 @@
-define([
-  'App',
-  'text!tpl/menu.html'
-], function(App, menuTpl) {
-
+define(['App', 'text!tpl/menu.html'], function(App, menuTpl) {
   var menuView = Backbone.View.extend({
     el: '#collection-list-nav',
     /**
@@ -18,11 +14,11 @@ define([
      * @returns {object} This view.
      */
     render: function() {
-
       var groups = [];
-      _.each(App.modules, function (item, i) {
+      _.each(App.modules, function(item, i) {
         if (!item.is_submodule) {
-          if (!item.file || item.file.indexOf('addons') === -1) { //addons don't get displayed on main page
+          if (!item.file || item.file.indexOf('addons') === -1) {
+            //addons don't get displayed on main page
             groups.push(item.name);
           }
         }
@@ -33,7 +29,7 @@ define([
       groups.sort();
 
       var menuHtml = this.menuTpl({
-        'groups': groups
+        groups: groups
       });
 
       // Render the view
@@ -56,10 +52,8 @@ define([
       //console.log(menuItem);
       // this.$menuItems.removeClass('active');
       // this.$menuItems.find('a[href=#'+menuItem+']').parent().addClass('active');
-
     }
   });
 
   return menuView;
-
 });

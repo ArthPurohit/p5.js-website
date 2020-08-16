@@ -11,10 +11,7 @@ define('App', function() {
  * @param {module} App
  * @param {module} router
  */
-require([
-  'App',
-  './documented-method'], function(App, DocumentedMethod) {
-
+require(['App', './documented-method'], function(App, DocumentedMethod) {
   // Set collections
   App.collections = ['allItems', 'classes', 'events', 'methods', 'properties', 'p5.sound'];
 
@@ -31,17 +28,15 @@ require([
     App.modules = [];
     App.project = data.project;
 
-
     var modules = data.modules;
 
     // Get class items (methods, properties, events)
     _.each(modules, function(m, idx, array) {
       App.modules.push(m);
-      if (m.name == "p5.sound") {
+      if (m.name === 'p5.sound') {
         App.sound.module = m;
       }
     });
-
 
     var items = data.classitems;
     var classes = data.classes;
@@ -53,31 +48,32 @@ require([
       }
     });
 
-
     // Get class items (methods, properties, events)
     _.each(items, function(el, idx, array) {
       if (el.itemtype) {
-        if (el.itemtype === "method") {
+        if (el.itemtype === 'method') {
           el = new DocumentedMethod(el);
           App.methods.push(el);
           App.allItems.push(el);
-        } else if (el.itemtype === "property") {
+        } else if (el.itemtype === 'property') {
           App.properties.push(el);
           App.allItems.push(el);
-        } else if (el.itemtype === "event") {
+        } else if (el.itemtype === 'event') {
           App.events.push(el);
           App.allItems.push(el);
         }
 
         // libraries
-        if (el.module === "p5.sound") {
+        if (el.module === 'p5.sound') {
           App.sound.items.push(el);
         }
       }
     });
 
     _.each(App.classes, function(c, idx) {
-      c.items = _.filter(App.allItems, function(it){ return it.class === c.name; });
+      c.items = _.filter(App.allItems, function(it) {
+        return it.class === c.name;
+      });
     });
 
     require(['router']);

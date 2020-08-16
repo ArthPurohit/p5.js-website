@@ -1,6 +1,5 @@
 define([
   'App',
-
   // Views
   'searchView',
   'listView',
@@ -8,7 +7,6 @@ define([
   'menuView',
   'libraryView'
 ], function(App, searchView, listView, itemView, menuView, libraryView) {
-
   // Store the original title parts so we can substitue different endings.
   var _originalDocumentTitle = window.document.title;
 
@@ -27,7 +25,6 @@ define([
      * Render.
      */
     render: function() {
-
       // Menu view
       if (!App.menuView) {
         App.menuView = new menuView();
@@ -80,16 +77,15 @@ define([
      * Append the supplied name to the first part of original document title.
      * If no name is supplied, the title will reset to the original one.
      */
-    appendToDocumentTitle: function(name){
-      if(name){
-        let firstTitlePart = _originalDocumentTitle.split(" | ")[0];
-        window.document.title = [firstTitlePart, name].join(" | ");
+    appendToDocumentTitle: function(name) {
+      if (name) {
+        let firstTitlePart = _originalDocumentTitle.split(' | ')[0];
+        window.document.title = [firstTitlePart, name].join(' | ');
       } else {
         window.document.title = _originalDocumentTitle;
       }
-    }    
+    }
   });
 
   return pageView;
-
 });
