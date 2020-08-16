@@ -1,4 +1,7 @@
-define(['App', 'text!tpl/menu.html'], function(App, menuTpl) {
+const fs = require('fs');
+const menuTpl = fs.readFileSync(__dirname + '/../tpl/menu.html', 'utf8');
+
+module.exports = function(App) {
   var menuView = Backbone.View.extend({
     el: '#collection-list-nav',
     /**
@@ -56,4 +59,4 @@ define(['App', 'text!tpl/menu.html'], function(App, menuTpl) {
   });
 
   return menuView;
-});
+};

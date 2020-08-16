@@ -9,6 +9,8 @@
 const yaml = require('js-yaml');
 const fs = require('fs').promises;
 const pkg = require('./package.json');
+const browserify = require('browserify');
+const brfs = require('brfs');
 
 module.exports = function(grunt) {
   require('time-grunt')(grunt);
@@ -126,36 +128,20 @@ module.exports = function(grunt) {
       }
     },
 
-    requirejs: {
-      yuidoc_theme: {
-        options: {
-          baseUrl: '<%= config.src %>/yuidoc-p5-theme-src/scripts/',
-          mainConfigFile: '<%= config.src %>/yuidoc-p5-theme-src/scripts/config.js',
-          name: 'main',
-          out: '<%= config.src %>/assets/js/reference.js',
-          optimize: 'none',
-          generateSourceMaps: false,
-          findNestedDependencies: true,
-          wrap: true,
-          paths: {
-            jquery: 'empty:'
-          }
-        }
-      }
-    },
-
     // Images:
     imagemin: {
       images: {
         options: {
           optimizationLevel: 2
         },
-        files: [{
-          expand: true,
-          cwd: '<%= config.src %>/assets/img',
-          src: ['**/*.{png,jpg,gif,svg,ico}'],
-          dest: '<%= config.dist %>/assets/img/'
-        }]
+        files: [
+          {
+            expand: true,
+            cwd: '<%= config.src %>/assets/img',
+            src: ['**/*.{png,jpg,gif,svg,ico}'],
+            dest: '<%= config.dist %>/assets/img/'
+          }
+        ]
       }
     },
 
@@ -180,16 +166,18 @@ module.exports = function(grunt) {
           annotation: '<%= config.dist %>/assets/css/maps/'
         },
         processors: [
-          require('autoprefixer')({browsers: [
-            'Android 2.3',
-            'Android >= 4',
-            'Chrome >= 20',
-            'Firefox >= 24',
-            'Explorer >= 8',
-            'iOS >= 6',
-            'Opera >= 12',
-            'Safari >= 6'
-          ]}),
+          require('autoprefixer')({
+            browsers: [
+              'Android 2.3',
+              'Android >= 4',
+              'Chrome >= 20',
+              'Firefox >= 24',
+              'Explorer >= 8',
+              'iOS >= 6',
+              'Opera >= 12',
+              'Safari >= 6'
+            ]
+          }),
           require('cssnano')()
         ]
       },
@@ -359,23 +347,48 @@ module.exports = function(grunt) {
 
     const version = require('./src/templates/pages/reference/data.json').project.version;
 
-    fs.readFile('./src/data/data.yml').then((str) => {
-      const data = yaml.safeLoad(str);
-      data.version = version;
+    fs.readFile('./src/data/data.yml')
+      .then(str => {
+        const data = yaml.safeLoad(str);
+        data.version = version;
 
-      const dump = yaml.safeDump(data);
+        const dump = yaml.safeDump(data);
 
-      return fs.writeFile('./src/data/data.yml', dump);
-    }).then(() => {
-      done();
-    });
+        return fs.writeFile('./src/data/data.yml', dump);
+      })
+      .then(() => {
+        done();
+      });
+  });
+
+  grunt.registerTask('browserify', function() {
+    const done = this.async();
+
+    // Invoke Browserify programatically to bundle the code
+    const browserified = browserify(
+      './src/yuidoc-p5-theme-src/scripts/main.js',
+      {
+        standalone: 'App'
+      }
+    ).transform(brfs);
+
+    const bundle = browserified.bundle();
+
+    let buf = '';
+    bundle
+      .on('data', data => {
+        buf += data.toString('utf8');
+      })
+      .on('end', () => {
+        grunt.file.write('./src/assets/js/reference.js', buf);
+        done();
+      });
   });
 
   grunt.loadNpmTasks('grunt-exec');
   grunt.loadNpmTasks('grunt-assemble');
   grunt.loadNpmTasks('grunt-file-append');
   grunt.loadNpmTasks('grunt-contrib-compress');
-  grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-html');
 
   // multi-tasks: collections of other tasks
@@ -408,8 +421,7 @@ module.exports = function(grunt) {
     'update-version',
     'exec',
     'clean',
-    'requirejs:yuidoc_theme',
-    'requirejs',
+    'browserify',
     'copy',
     'optimize',
     'assemble',

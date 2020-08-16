@@ -1,12 +1,10 @@
-define([
-  'App',
-  // Views
-  'searchView',
-  'listView',
-  'itemView',
-  'menuView',
-  'libraryView'
-], function(App, searchView, listView, itemView, menuView, libraryView) {
+module.exports = function(App) {
+  const menuView = require('./menuView.js')(App);
+  const itemView = require('./itemView.js')(App);
+  const listView = require('./listView.js')(App);
+  const libraryView = require('./libraryView.js')(App);
+  const searchView = require('./searchView.js')(App);
+
   // Store the original title parts so we can substitue different endings.
   var _originalDocumentTitle = window.document.title;
 
@@ -88,4 +86,4 @@ define([
   });
 
   return pageView;
-});
+};

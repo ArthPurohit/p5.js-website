@@ -1,8 +1,7 @@
-define([
-  'App',
-  // Templates
-  'text!tpl/library.html'
-], function(App, libraryTpl) {
+const fs = require('fs');
+const libraryTpl = fs.readFileSync(__dirname + '/../tpl/library.html', 'utf8');
+
+module.exports = function(App) {
   var libraryView = Backbone.View.extend({
     el: '#list',
     events: {},
@@ -125,4 +124,4 @@ define([
   });
 
   return libraryView;
-});
+};

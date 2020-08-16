@@ -11,7 +11,9 @@
     "define": false,
     "require": false,
     "Backbone": true,
-    "_": true
+    "_": true,
+    "Prism": true,
+    "renderCode": true
   },
   "rules": {
     "no-cond-assign": [

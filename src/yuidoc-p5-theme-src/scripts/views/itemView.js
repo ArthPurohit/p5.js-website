@@ -1,14 +1,9 @@
-define([
-  'App',
-  // Templates
-  'text!tpl/item.html',
-  'text!tpl/class.html',
-  'text!tpl/itemEnd.html',
-  // Tools
-  'prettify'
-], function(App, itemTpl, classTpl, endTpl) {
-  'use strict';
+const fs = require('fs');
+const itemTpl = fs.readFileSync(__dirname + '/../tpl/item.html', 'utf8');
+const classTpl = fs.readFileSync(__dirname + '/../tpl/class.html', 'utf8');
+const endTpl = fs.readFileSync(__dirname + '/../tpl/itemEnd.html', 'utf8');
 
+module.exports = function(App) {
   var appVersion = App.project.version || 'master';
 
   var itemView = Backbone.View.extend({
@@ -219,4 +214,4 @@ define([
   });
 
   return itemView;
-});
+};

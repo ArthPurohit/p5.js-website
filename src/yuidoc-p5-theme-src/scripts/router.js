@@ -1,16 +1,13 @@
-define([
-  'App'
-], function(App) {
-
-  'use strict'; //
+module.exports = function(App) {
+  const pageView = require('./views/pageView.js')(App);
 
   var Router = Backbone.Router.extend({
     routes: {
       '': 'list',
-      'p5': 'list',
+      p5: 'list',
       'p5/': 'list',
-      'classes': 'list',
-      'search': 'search',
+      classes: 'list',
+      search: 'search',
       'libraries/:lib': 'library',
       ':searchClass(/:searchItem)': 'get'
     },
@@ -23,32 +20,31 @@ define([
      */
     init: function(callback) {
       var self = this;
-      require(['pageView'], function(pageView) {
-        // If already initialized, move away from here!
-        if (self._initialized) {
-          if (callback) {
-            callback();
-          }
-          return;
-        }
 
-        // Update initialization state: must be done now to avoid recursive mess
-        self._initialized = true;
-
-        // Render views
-        if (!App.pageView) {
-          App.pageView = new pageView();
-          App.pageView.init().render();
-        }
-
-        // If a callback is set (a route has already been called), run it
-        // otherwise, show the default list
+      // If already initialized, move away from here!
+      if (self._initialized) {
         if (callback) {
           callback();
-        } else {
-          self.list();
         }
-      });
+        return;
+      }
+
+      // Update initialization state: must be done now to avoid recursive mess
+      self._initialized = true;
+
+      // Render views
+      if (!App.pageView) {
+        App.pageView = new pageView();
+        App.pageView.init().render();
+      }
+
+      // If a callback is set (a route has already been called), run it
+      // otherwise, show the default list
+      if (callback) {
+        callback();
+      } else {
+        self.list();
+      }
     },
     /**
      * Start route. Simply check if initialized.
@@ -102,7 +98,7 @@ define([
 
       // Only search for a class, if itemName is undefined
       if (className && !itemName) {
-        for (var i = 0; i < classesCount; i++) {
+        for (let i = 0; i < classesCount; i++) {
           if (classes[i].name.toLowerCase() === className) {
             found = classes[i];
             _.each(found.items, function(i, idx) {
@@ -114,9 +110,11 @@ define([
         // Search for a class item
       } else if (className && itemName) {
         // Search case sensitively
-        for (var i = 0; i < itemsCount; i++) {
-          if (items[i].class.toLowerCase() === className &&
-            items[i].name === itemName) {
+        for (let i = 0; i < itemsCount; i++) {
+          if (
+            items[i].class.toLowerCase() === className &&
+            items[i].name === itemName
+          ) {
             found = items[i];
             break;
           }
@@ -210,7 +208,6 @@ define([
       }
     }
   }
-
   // Get the router
   App.router = new Router();
 
@@ -218,4 +215,4 @@ define([
   Backbone.history.start();
 
   return App.router;
-});
+};

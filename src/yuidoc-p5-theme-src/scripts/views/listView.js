@@ -1,8 +1,7 @@
-define([
-  'App',
-  // Templates
-  'text!tpl/list.html'
-], function(App, listTpl) {
+const fs = require('fs');
+const listTpl = fs.readFileSync(__dirname + '/../tpl/list.html', 'utf8');
+
+module.exports = function(App) {
   var striptags = function(html) {
     var div = document.createElement('div');
     div.innerHTML = html;
@@ -130,4 +129,4 @@ define([
   });
 
   return listView;
-});
+};

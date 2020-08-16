@@ -1,11 +1,11 @@
-define([
-  'App',
-  // Templates
-  'text!tpl/search.html',
-  'text!tpl/search_suggestion.html',
-  // Tools
-  'typeahead'
-], function(App, searchTpl, suggestionTpl) {
+const fs = require('fs');
+const searchTpl = fs.readFileSync(__dirname + '/../tpl/search.html', 'utf8');
+const suggestionTpl = fs.readFileSync(
+  __dirname + '/../tpl/search_suggestion.html',
+  'utf8'
+);
+
+module.exports = function(App) {
   var searchView = Backbone.View.extend({
     el: '#search',
     /**
@@ -49,7 +49,8 @@ define([
         //'highlight': true,
         source: self.substringMatcher(this.items),
         templates: {
-          empty: '<p class="empty-message">Unable to find any item that match the current query</p>',
+          empty:
+            '<p class="empty-message">Unable to find any item that match the current query</p>',
           suggestion: _.template(suggestionTpl)
         }
       });
@@ -123,4 +124,4 @@ define([
   });
 
   return searchView;
-});
+};
